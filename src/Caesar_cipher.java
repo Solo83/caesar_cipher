@@ -1,8 +1,11 @@
+import java.io.IOException;
+
 public class Caesar_cipher {
 
-    public static void main(String[] args) {
+    public static void main(String[] args)  {
 
-        System.out.println("Hello Caesar");
+        Console console = new Console();
+        console.mainMenu(console);
 
     }
 
