@@ -4,26 +4,37 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Scanner;
 
-public class Encrypt {
+public  class Encrypt {
 
 
-    private final static String ALPHABET = "АБВГДЕЁЖЗИКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзиклмнопрстуфхцчшщъыьэя.,”':-!? ";
-
+    private final static String ALPHABET = "АБВГДЕЁЖЗИКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзиклмнопрстуфхцчшщъыьэя.,”':-!? abc";
 
     public static void encode() {  // Шифрование
 
-
+        int key_length = ALPHABET.length()-1;
         Scanner scanner = new Scanner(System.in);
-
         System.out.print("\nEnter path to source file: ");
-
         // Path path = Paths.get(scanner.nextLine());
-
         Path path = Paths.get("C:\\caesar_cipher\\src\\words.txt");
+        System.out.print("\nEnter digit key (1 - " + key_length + "): ");
 
-        System.out.print("\nEnter key: ");
+        int shift = 0;
 
-        int shift = scanner.nextInt();
+        while (scanner.hasNextInt()) {
+            try {
+                shift = scanner.nextInt();
+
+                if (shift<=key_length) {
+                  break;}
+                else {
+                    System.out.println("\nKey must be less than "+ key_length); }
+
+            } catch (Exception e) {
+                System.out.println("\nThe selection was invalid!");
+            }
+        }
+
+
 
         Path encodedFile = path.getParent().resolve("encode.txt");
 
@@ -35,7 +46,6 @@ public class Encrypt {
             }
         }
 
-
         try (
 
                 BufferedReader input = Files.newBufferedReader(path);
@@ -44,7 +54,6 @@ public class Encrypt {
             while (input.ready()) {
 
                 String line = input.readLine();
-
                 output.write(caesar(line, shift) + '\n');
             }
 
@@ -57,24 +66,17 @@ public class Encrypt {
             System.out.println("\nI/O Error");
         }
 
-
     }
 
     public static void decode() { // Дешифровка
 
 
         Scanner scanner = new Scanner(System.in);
-
         System.out.print("\nEnter path to encoded file: ");
-
         // Path path = Paths.get(scanner.nextLine());
-
         Path path = Paths.get("C:\\caesar_cipher\\src\\encode.txt");
-
         System.out.print("\nEnter key: ");
-
         int shift = scanner.nextInt();
-
         Path decodedFile = path.getParent().resolve("decode.txt");
 
         if (!Files.exists(decodedFile)) {
@@ -85,7 +87,6 @@ public class Encrypt {
             }
         }
 
-
         try (
 
                 BufferedReader input = Files.newBufferedReader(path);
@@ -94,7 +95,6 @@ public class Encrypt {
             while (input.ready()) {
 
                 String line = input.readLine();
-
                 output.write(caesar(line, shift) + '\n');
             }
 
@@ -111,7 +111,6 @@ public class Encrypt {
     private static String caesar(String text, int shift) { // Алгоритм
 
         StringBuilder result = new StringBuilder(text.length());
-
         int replace;
 
         for (int i = 0; i < text.length(); i++) {
