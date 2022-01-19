@@ -4,8 +4,8 @@ public class Caesar_cipher {
 
     public static void main(String[] args)  {
 
-        Console console = new Console();
-        console.mainMenu(console);
+        Console console = Console.getInstance();
+        console.mainMenu();
 
     }
 
