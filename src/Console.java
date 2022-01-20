@@ -82,11 +82,11 @@ public class Console { // класс для консольного меню
 
         switch (selection) {
             case 1:
-                Encrypt.encode();
+                Encrypt.file_encode();
                 submenu1();
                 break;
             case 2:
-                Encrypt.decode();
+                Encrypt.file_decode();
                 submenu1();
                 break;
             case 3:

@@ -10,7 +10,7 @@ public class Encrypt {
     private final static String ALPHABET = "1234567890АБВГДЕЁЖЗИКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзиклмнопрстуфхцчшщъыьэя.,”':-!? ";
 
 
-    public static void encode() {  // Шифрование
+    public static void file_encode() {  // Шифрование
 
 
         Scanner scanner = new Scanner(System.in);
@@ -60,7 +60,7 @@ public class Encrypt {
 
     }
 
-    public static void decode() { // Дешифровка
+    public static void file_decode() { // Дешифровка
 
 
         Scanner scanner = new Scanner(System.in);
