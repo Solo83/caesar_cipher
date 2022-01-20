@@ -1,30 +1,30 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class Encrypt {
 
-
     private final static String ALPHABET = "1234567890АБВГДЕЁЖЗИКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзиклмнопрстуфхцчшщъыьэя.,”':-!? ";
-
 
     public static void file_encode() {  // Шифрование
 
-
         Scanner scanner = new Scanner(System.in);
-
         System.out.print("\nEnter path to source file: ");
 
         // Path path = Paths.get(scanner.nextLine());
 
         Path path = Paths.get("C:\\caesar_cipher\\src\\words.txt");
-
         System.out.print("\nEnter key: ");
-
         int shift = scanner.nextInt();
-
         Path encodedFile = path.getParent().resolve("encode.txt");
 
         if (!Files.exists(encodedFile)) {
@@ -35,16 +35,13 @@ public class Encrypt {
             }
         }
 
-
         try (
-
                 BufferedReader input = Files.newBufferedReader(path);
                 BufferedWriter output = Files.newBufferedWriter(encodedFile)) {
 
             while (input.ready()) {
 
                 String line = input.readLine();
-
                 output.write(caesar_encode(line, shift) + '\n');
             }
 
@@ -64,17 +61,13 @@ public class Encrypt {
 
 
         Scanner scanner = new Scanner(System.in);
-
         System.out.print("\nEnter path to encoded file: ");
 
         // Path path = Paths.get(scanner.nextLine());
 
         Path path = Paths.get("C:\\caesar_cipher\\src\\encode.txt");
-
         System.out.print("\nEnter key: ");
-
         int shift = scanner.nextInt();
-
         Path decodedFile = path.getParent().resolve("decode.txt");
 
         if (!Files.exists(decodedFile)) {
@@ -94,7 +87,6 @@ public class Encrypt {
             while (input.ready()) {
 
                 String line = input.readLine();
-
                 output.write(caesar_decode(line, shift) + '\n');
             }
 
@@ -105,13 +97,11 @@ public class Encrypt {
         } catch (IOException e) {
             System.out.println("\nI/O Error");
         }
-
     }
 
     private static String caesar_encode(String text, int shift) { // Алгоритм
 
         StringBuilder result = new StringBuilder(text.length());
-
         int replace;
 
         for (int i = 0; i < text.length(); i++) {
@@ -119,13 +109,11 @@ public class Encrypt {
             int index = ALPHABET.indexOf(text.charAt(i));
             if (index >= 0) { //проверить есть ли символ в алфавите
 
-                replace = (shift + index ) % ALPHABET.length(); //положение шифрованного символа относительно индекса вхождения в алфавит со смещением
-
+                replace = (shift + index) % ALPHABET.length(); //положение шифрованного символа относительно индекса вхождения в алфавит со смещением
                 if (replace < 0) { //расчет для отрицательного индекса
                     replace = replace + ALPHABET.length();
                 }
                 result.append(ALPHABET.charAt(replace));
-
             } else result.append(text.charAt(i));
 
         }
@@ -136,21 +124,16 @@ public class Encrypt {
     private static String caesar_decode(String text, int shift) { // Алгоритм
 
         StringBuilder result = new StringBuilder(text.length());
-
         int replace;
 
         for (int i = 0; i < text.length(); i++) {
-
             int index = ALPHABET.indexOf(text.charAt(i));
             if (index >= 0) { //проверить есть ли символ в алфавите
-
-                replace = (shift*-1+index) % ALPHABET.length(); //положение шифрованного символа относительно индекса вхождения в алфавит со смещением
-
+                replace = (shift * -1 + index) % ALPHABET.length(); //положение шифрованного символа относительно индекса вхождения в алфавит со смещением
                 if (replace < 0) { //расчет для отрицательного индекса
                     replace = replace + ALPHABET.length();
                 }
                 result.append(ALPHABET.charAt(replace));
-
             } else result.append(text.charAt(i));
 
         }
@@ -162,69 +145,82 @@ public class Encrypt {
 
         Path path_Crypted = Paths.get("C:\\caesar_cipher\\src\\encode.txt");
         Path path_Original = Paths.get("C:\\caesar_cipher\\src\\words.txt");
+        Path path_Decrypted = Paths.get("C:\\caesar_cipher\\src\\decode.txt");
 
-        Map<Character, Integer> map_crypted = new HashMap<>();
-        Map<Character, Integer> map_original = new HashMap<>();
-        Map<Character, Character> map_merged = new HashMap<>();
-
+        Map<Character, Integer> map_crypted = new TreeMap<>();
+        Map<Character, Integer> map_original = new TreeMap<>();
+        Map<Character, Character> merged_map = new TreeMap<>();
 
         try (
-                BufferedReader input_crypto = Files.newBufferedReader(path_Crypted))
-                {
+                BufferedReader input_crypto = Files.newBufferedReader(path_Crypted)) {
 
             while (input_crypto.ready()) {
 
                 String crypted_String = input_crypto.readLine();
 
                 for (int i = 0; i < crypted_String.length(); i++) {
-                    char c = ALPHABET.charAt(i);
+                    char c = crypted_String.charAt(i);
 
                     map_crypted.merge(c, 1, Integer::sum);
                 }
+            }
 
-                 }
-                    System.out.println(map_crypted);
-
-            try ( BufferedReader input_original = Files.newBufferedReader(path_Original)) {
+            try (BufferedReader input_original = Files.newBufferedReader(path_Original)) {
 
                 while (input_original.ready()) {
+                    String original_String = input_original.readLine();
 
-                String original_String = input_original.readLine();
-
-                for (int i = 0; i < original_String.length(); i++) {
-                    char c = ALPHABET.charAt(i);
+                    for (int i = 0; i < original_String.length(); i++) {
+                        char c = original_String.charAt(i);
 
                         map_original.merge(c, 1, Integer::sum);
+                    }
                 }
             }
-                System.out.println(map_original);
-            }
-                } catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("File not found");
         }
 
-        int max_crypted = Collections.max(map_crypted.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey();
-        int max_original = Collections.max(map_original.entrySet(), Comparator.comparingInt(Map.Entry::getValue)).getKey();
+        List<Map.Entry<Character, Integer>> list_original = map_original.entrySet().stream()
+                .sorted((e1, e2) -> -e1.getValue().compareTo(e2.getValue()))
+                .collect(Collectors.toList());
 
+        List<Map.Entry<Character, Integer>> list_crypted = map_crypted.entrySet().stream()
+                .sorted((e1, e2) -> -e1.getValue().compareTo(e2.getValue()))
+                .collect(Collectors.toList());
 
+        for (int i = 0; i < list_original.size(); i++) {
+            merged_map.put(list_original.get(i).getKey(), list_crypted.get(i).getKey());
+        }
 
-        System.out.println(map_merged);
+        try (
+                BufferedReader input_crypto = Files.newBufferedReader(path_Crypted);
+                BufferedWriter output_crypto = Files.newBufferedWriter(path_Decrypted)) {
+            while (input_crypto.ready()) {
 
-        int prefered_key = (ALPHABET.indexOf(max_original) + ALPHABET.indexOf(max_crypted))  % ALPHABET.length();
+                String crypted_String = input_crypto.readLine();
 
-        System.out.println("\nThe key is: " + prefered_key);
+                for (int i = 0; i < crypted_String.length(); i++) {
+                    StringBuilder sbdecrypt = new StringBuilder();
 
-        System.out.println(ALPHABET.indexOf(max_original));
-        System.out.println(ALPHABET.indexOf(max_crypted));
-
-
+                    for (Map.Entry<Character, Character> characterCharacterEntry : merged_map.entrySet()) {
+                        if (characterCharacterEntry.getValue() == crypted_String.charAt(i)) {
+                            sbdecrypt.append(characterCharacterEntry.getKey());
+                        }
+                    }
+                    output_crypto.write(sbdecrypt.toString());
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
-    public static  void bruteforce() {
+
+    public static void bruteforce() {
 
         Path path_Crypted = Paths.get("C:\\caesar_cipher\\src\\encode.txt");
 
-        //Convert this message to uppercase
         StringBuilder sbdecrypt;
 
         int key;
@@ -235,54 +231,52 @@ public class Encrypt {
 
 
         try (
-                BufferedReader input_crypto = Files.newBufferedReader(path_Crypted))
-        {
+                BufferedReader input_crypto = Files.newBufferedReader(path_Crypted)) {
 
             while (input_crypto.ready()) {
 
                 String encryptmessage = input_crypto.readLine();
 
-        //Loop through the keys in the alphabet.
-        for (key = 1; key < ALPHABET.length(); key++) {
+                //Loop through the keys in the alphabet.
+                for (key = 1; key < ALPHABET.length(); key++) {
 
-            sbdecrypt = new StringBuilder(encryptmessage);
-            for (i = 0; i < sbdecrypt.length(); i++) {
+                    sbdecrypt = new StringBuilder(encryptmessage);
+                    for (i = 0; i < sbdecrypt.length(); i++) {
 
-                currentchar = sbdecrypt.charAt(i);
-                index = ALPHABET.indexOf(currentchar);
+                        currentchar = sbdecrypt.charAt(i);
+                        index = ALPHABET.indexOf(currentchar);
 
-                //If the currentchar is in the alphabet
-                if (index != -1) {
-                    //Reduce the character by the key in the alphabet
-                    index = index - key;
-                    //If the character goes below 0, go back to the end of the alphabet
-                    if (index < 0) {
-                        index = index + ALPHABET.length();
-
-                        //Get the new character in the alphabet
-                        newchar = ALPHABET.charAt(index);
-
-                        //Set the character in the stringbuilder
-                        sbdecrypt.setCharAt(i, newchar);
-                    } else {
-                        //Get the new character in the alphabet
-                        newchar = ALPHABET.charAt(index);
-                        //Set the character in the stringbuilder
-                        sbdecrypt.setCharAt(i, newchar);
+                        //If the currentchar is in the alphabet
+                        if (index != -1) {
+                            //Reduce the character by the key in the alphabet
+                            index = index - key;
+                            //If the character goes below 0, go back to the end of the alphabet
+                            if (index < 0) {
+                                index = index + ALPHABET.length();
+                                //Get the new character in the alphabet
+                                newchar = ALPHABET.charAt(index);
+                                //Set the character in the stringbuilder
+                                sbdecrypt.setCharAt(i, newchar);
+                            } else {
+                                //Get the new character in the alphabet
+                                newchar = ALPHABET.charAt(index);
+                                //Set the character in the stringbuilder
+                                sbdecrypt.setCharAt(i, newchar);
+                            }
+                        }
                     }
+
+                    if (sbdecrypt.toString().contains(". ") & sbdecrypt.toString().contains(", ")) {
+                        System.out.println("Key: " + key + " Decrypted String: " + sbdecrypt); //побел + запятая + пробел + точка,
+
+                    }
+
                 }
+                //Print the key and the resulting string
             }
 
-            if (sbdecrypt.toString().contains(". ") & sbdecrypt.toString().contains(", ")) {
-                 System.out.println("Key: " + key + " Decrypted String: " + sbdecrypt); //побел + запятая + пробел + точка,
-
-            }
-
-        }
-            //Print the key and the resulting string
-        }
-
-} catch (IOException e) {
+        } catch (IOException e) {
             System.out.println("\nI/O Error");
         }
-    }}
+    }
+}
