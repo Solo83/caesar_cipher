@@ -126,6 +126,7 @@ public class Console { // класс для консольного меню
                 submenu2();
                 break;
             case 2:
+                Encrypt.analysis();
                 submenu2();
                 break;
             case 3:
