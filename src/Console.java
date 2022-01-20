@@ -123,6 +123,7 @@ public class Console { // класс для консольного меню
 
         switch (selection) {
             case 1:
+                Encrypt.bruteforce();
                 submenu2();
                 break;
             case 2:
