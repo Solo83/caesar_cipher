@@ -13,17 +13,16 @@ import java.util.stream.Collectors;
 
 public class Encrypt {
 
-    private final static String ALPHABET = "1234567890АБВГДЕЁЖЗИКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзиклмнопрстуфхцчшщъыьэя.,”':-!? ";
+    private final static String ALPHABET = "1234567890АБВГДЕЁЖЗИКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдеёжзийклмнопрстуфхцчшщъыьэюя.,”':-!? ";
 
     public static void file_encode() {  // Шифрование
 
         Scanner scanner = new Scanner(System.in);
-        System.out.print("\nEnter path to source file: ");
+        System.out.print("\nВведите путь к файлу, который требуется зашифровать: ");
 
         // Path path = Paths.get(scanner.nextLine());
-
         Path path = Paths.get("C:\\caesar_cipher\\src\\words.txt");
-        System.out.print("\nEnter key: ");
+        System.out.print("\nВведите ключ шифрования: ");
         int shift = scanner.nextInt();
         Path encodedFile = path.getParent().resolve("encode.txt");
 
@@ -31,7 +30,7 @@ public class Encrypt {
             try {
                 Files.createFile(path.getParent().resolve("encode.txt"));
             } catch (IOException e) {
-                System.out.println("\nCan't create file");
+                System.out.println("\nНевозможно создать файл!");
             }
         }
 
@@ -44,29 +43,23 @@ public class Encrypt {
                 String line = input.readLine();
                 output.write(caesar_encode(line, shift) + '\n');
             }
-
-            System.out.println("\nOutput file path: " + encodedFile);
-
+            System.out.println("\nПуть к зашифрованному файлу: " + encodedFile);
 
         } catch (FileNotFoundException e) {
-            System.out.println("\nFile not found");
+            System.out.println("\nФайл не найден!");
         } catch (IOException e) {
-            System.out.println("\nI/O Error");
+            System.out.println("\nОшибка I/O Error");
         }
-
-
     }
 
     public static void file_decode() { // Дешифровка
 
-
         Scanner scanner = new Scanner(System.in);
-        System.out.print("\nEnter path to encoded file: ");
+        System.out.print("\nВведите путь к зашифрованному файлу: ");
 
         // Path path = Paths.get(scanner.nextLine());
-
         Path path = Paths.get("C:\\caesar_cipher\\src\\encode.txt");
-        System.out.print("\nEnter key: ");
+        System.out.print("\nВведите ключ дешифровки: ");
         int shift = scanner.nextInt();
         Path decodedFile = path.getParent().resolve("decode.txt");
 
@@ -74,13 +67,11 @@ public class Encrypt {
             try {
                 Files.createFile(path.getParent().resolve("decode.txt"));
             } catch (IOException e) {
-                System.out.println("\nCan't create file");
+                System.out.println("\nНевозможно создать файл!");
             }
         }
 
-
         try (
-
                 BufferedReader input = Files.newBufferedReader(path);
                 BufferedWriter output = Files.newBufferedWriter(decodedFile)) {
 
@@ -89,17 +80,16 @@ public class Encrypt {
                 String line = input.readLine();
                 output.write(caesar_decode(line, shift) + '\n');
             }
-
             System.out.println("\nOutput file path: " + decodedFile);
 
         } catch (FileNotFoundException e) {
-            System.out.println("\nFile not found");
+            System.out.println("\nФайл не найден!");
         } catch (IOException e) {
-            System.out.println("\nI/O Error");
+            System.out.println("\nОшибка I/O Error");
         }
     }
 
-    private static String caesar_encode(String text, int shift) { // Алгоритм
+    private static String caesar_encode(String text, int shift) {
 
         StringBuilder result = new StringBuilder(text.length());
         int replace;
@@ -117,7 +107,6 @@ public class Encrypt {
             } else result.append(text.charAt(i));
 
         }
-
         return result.toString();
     }
 
@@ -135,21 +124,20 @@ public class Encrypt {
                 }
                 result.append(ALPHABET.charAt(replace));
             } else result.append(text.charAt(i));
-
         }
-
         return result.toString();
-    }
+   }
 
-    public static void analysis() { // Криптоанализ
+    public static void analysis() { // Статистический анализ
 
         Path path_Crypted = Paths.get("C:\\caesar_cipher\\src\\encode.txt");
         Path path_Original = Paths.get("C:\\caesar_cipher\\src\\words.txt");
         Path path_Decrypted = Paths.get("C:\\caesar_cipher\\src\\decode.txt");
 
+
         Map<Character, Integer> map_crypted = new TreeMap<>();
         Map<Character, Integer> map_original = new TreeMap<>();
-        Map<Character, Character> merged_map = new TreeMap<>();
+        Map<Character, Character> merged_Map = new TreeMap<>();
 
         try (
                 BufferedReader input_crypto = Files.newBufferedReader(path_Crypted)) {
@@ -160,20 +148,25 @@ public class Encrypt {
 
                 for (int i = 0; i < crypted_String.length(); i++) {
                     char c = crypted_String.charAt(i);
-
-                    map_crypted.merge(c, 1, Integer::sum);
+                    for (Character character : ALPHABET.toCharArray()) {
+                        if (character == c) {
+                            map_crypted.merge(character, 1, Integer::sum);}
+                    }
                 }
             }
 
             try (BufferedReader input_original = Files.newBufferedReader(path_Original)) {
 
                 while (input_original.ready()) {
+
                     String original_String = input_original.readLine();
 
                     for (int i = 0; i < original_String.length(); i++) {
                         char c = original_String.charAt(i);
-
-                        map_original.merge(c, 1, Integer::sum);
+                        for (Character character : ALPHABET.toCharArray()) {
+                            if (character == c) {
+                                map_original.merge(character, 1, Integer::sum);}
+                        }
                     }
                 }
             }
@@ -190,27 +183,35 @@ public class Encrypt {
                 .collect(Collectors.toList());
 
         for (int i = 0; i < list_original.size(); i++) {
-            merged_map.put(list_original.get(i).getKey(), list_crypted.get(i).getKey());
+            merged_Map.put(list_original.get(i).getKey(), list_crypted.get(i).getKey());
         }
 
         try (
                 BufferedReader input_crypto = Files.newBufferedReader(path_Crypted);
                 BufferedWriter output_crypto = Files.newBufferedWriter(path_Decrypted)) {
+
             while (input_crypto.ready()) {
 
                 String crypted_String = input_crypto.readLine();
+                StringBuilder sbdecrypt = new StringBuilder();
 
                 for (int i = 0; i < crypted_String.length(); i++) {
-                    StringBuilder sbdecrypt = new StringBuilder();
-
-                    for (Map.Entry<Character, Character> characterCharacterEntry : merged_map.entrySet()) {
-                        if (characterCharacterEntry.getValue() == crypted_String.charAt(i)) {
-                            sbdecrypt.append(characterCharacterEntry.getKey());
+                    char c = crypted_String.charAt(i);
+                      for (Character character : ALPHABET.toCharArray()) {
+                        if (character == c)   {
+                            for (Map.Entry<Character, Character> characterCharacterEntry : merged_Map.entrySet()) {
+                                if (characterCharacterEntry.getValue() == c) {
+                                    sbdecrypt.append(characterCharacterEntry.getKey());
+                                 }
+                            }
                         }
-                    }
-                    output_crypto.write(sbdecrypt.toString());
+                      }
                 }
+                output_crypto.write(sbdecrypt.toString() + '\n');
             }
+
+            System.out.println("\nOutput file path: " + path_Decrypted);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
