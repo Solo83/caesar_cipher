@@ -16,8 +16,7 @@ public class Encrypt {
     public static void file_encode() {  // Шифрование
 
         System.out.print("\nВведите путь к файлу, который требуется зашифровать: ");
-        //Path path = Paths.get(new Scanner(System.in).nextLine());
-        Path path  = Paths.get("c:\\1\\book.txt");
+        Path path = Paths.get(new Scanner(System.in).nextLine());
         System.out.print("\nВведите ключ шифрования: ");
         int shift = new Scanner(System.in).nextInt();
         Path path_Encrypted = Paths.get(String.valueOf(path.resolve(path.getParent() + "\\caesarEncoded.txt")));
@@ -43,7 +42,7 @@ public class Encrypt {
 
         System.out.print("\nВведите путь к зашифрованному файлу: ");
         Path path = Paths.get(new Scanner(System.in).nextLine());
-        System.out.print("\nВведите ключ дешифровки: ");
+        System.out.print("\nВведите ключ для дешифровки: ");
         int shift = new Scanner(System.in).nextInt();
         Path path_Decrypted = Paths.get(String.valueOf(path.resolve(path.getParent() + "\\caesarDecoded.txt")));
 
@@ -71,7 +70,6 @@ public class Encrypt {
         System.out.print("\nВведите путь к словарю с данными для анализа: ");
         Path path_Original = Paths.get(new Scanner(System.in).nextLine());
         Path path_Decrypted = Paths.get(String.valueOf(path_Crypt.resolve(path_Crypt.getParent() + "\\statisticDecoded.txt")));
-
 
         Map<Character, Integer> map_Crypted = new TreeMap<>();
         Map<Character, Integer> map_Original = new TreeMap<>();
@@ -163,8 +161,7 @@ public class Encrypt {
     public static void bruteforce() { //Метод брутфорса
 
         System.out.print("\nВведите путь к зашифрованному файлу: ");
-        // Path path_Crypted = Paths.get(new Scanner(System.in).nextLine());
-        Path path_Crypted = Paths.get("c:\\1\\caesarEncoded.txt");
+        Path path_Crypted = Paths.get(new Scanner(System.in).nextLine());
         Path path_Decrypted = Paths.get(String.valueOf(path_Crypted.resolve(path_Crypted.getParent() + "\\bruteforceDecoded.txt")));
 
         int key;
@@ -179,7 +176,7 @@ public class Encrypt {
             if (cryptomessage.length() < 100) { // если сообщение меньше 100 символов выводим список ключ/значение для самостоятельного выбора
                 System.out.println("\nКорректный ключ в списке:");
                 for (key = 1; key < ALPHABET.length(); key++) {
-                    System.out.println("Ключ: " + key + " Шифр: " + caesar_encode(cryptomessage, key * -1).substring(0, 25));
+                    System.out.println("Ключ: " + key + " Шифр: " + caesar_encode(cryptomessage, key * -1).substring(0, 50));
                 }
 
             }else {
