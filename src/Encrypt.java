@@ -1,11 +1,13 @@
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class Encrypt {
@@ -21,8 +23,8 @@ public class Encrypt {
         Path path_Encrypted = Paths.get(String.valueOf(path.resolve(path.getParent() + "\\caesarEncoded.txt")));
 
         try (
-             BufferedReader input = Files.newBufferedReader(path);
-             BufferedWriter output = Files.newBufferedWriter(path_Encrypted)) {
+                BufferedReader input = Files.newBufferedReader(path);
+                BufferedWriter output = Files.newBufferedWriter(path_Encrypted)) {
 
             while (input.ready()) {
 
@@ -31,8 +33,6 @@ public class Encrypt {
             }
             System.out.println("\nЗашифрованный файл успешно создан: " + path_Encrypted);
 
-        } catch (FileNotFoundException e) {
-            System.out.println("\nФайл не найден!");
         } catch (IOException e) {
             System.out.println("\nОшибка I/O Error");
         }
@@ -54,12 +54,10 @@ public class Encrypt {
             while (input.ready()) {
 
                 String line = input.readLine();
-                output.write(caesar_encode(line, shift*-1) + '\n');
+                output.write(caesar_encode(line, shift * -1) + '\n');
             }
             System.out.println("\nРасшифрованный файл успешно создан: " + path_Decrypted);
 
-        } catch (FileNotFoundException e) {
-            System.out.println("\nФайл не найден!");
         } catch (IOException e) {
             System.out.println("\nОшибка I/O Error");
         }
@@ -172,14 +170,14 @@ public class Encrypt {
         int key;
 
         try (Scanner scanner = new Scanner(path_Crypted);
-                BufferedWriter output_crypto = Files.newBufferedWriter(path_Decrypted)
+             BufferedWriter output_crypto = Files.newBufferedWriter(path_Decrypted)
         ) {
             String cryptomessage = scanner.useDelimiter("\\A").next();
 
             if (cryptomessage.length() < 100) { // если сообщение меньше 1 строки выводим список ключ/значение для самостоятельного выбора
                 System.out.println("\nКорректный ключ в списке:");
                 for (key = 1; key < ALPHABET.length(); key++) {
-                    System.out.println("Ключ: " +key + " Шифр: " + caesar_encode(cryptomessage, key * -1).substring(0, 25));
+                    System.out.println("Ключ: " + key + " Шифр: " + caesar_encode(cryptomessage, key * -1).substring(0, 25));
                 }
 
             } else {
@@ -189,7 +187,7 @@ public class Encrypt {
                     String[] array = decrypted.split(" ");
 
                     for (String s : array) {
-                        if (s.length()>25) {  //
+                        if (s.length() > 25) {  //
                             decrypted = null; // условие если в строке есть слово длиной более 25ти букв. Лингвистическая проверка текста на валидность подбора ключа.
                             break;
                         }
@@ -203,11 +201,10 @@ public class Encrypt {
                     }
                 }
             }
-
-            } catch(IOException e){
-                e.printStackTrace();
-            }
+        } catch (IOException e) {
+            System.out.println("\nОшибка I/O Error");
         }
+    }
 
     private static String caesar_encode(String text, int shift) {
 
