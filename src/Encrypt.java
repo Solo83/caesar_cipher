@@ -187,7 +187,7 @@ public class Encrypt {
                     String[] array = decrypted.split(" ");
 
                     for (String s : array) {
-                        if (s.length() > 25) {  //
+                        if (s.replaceAll("\\P{L}+","").length() > 25) {  //
                             decrypted = null; // условие если в строке есть слово длиной более 25ти букв. Лингвистическая проверка текста на валидность подбора ключа.
                             break;
                         }
