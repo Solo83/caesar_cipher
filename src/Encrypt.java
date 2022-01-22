@@ -4,10 +4,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Encrypt {
@@ -17,7 +16,8 @@ public class Encrypt {
     public static void file_encode() {  // Шифрование
 
         System.out.print("\nВведите путь к файлу, который требуется зашифровать: ");
-        Path path = Paths.get(new Scanner(System.in).nextLine());
+        //Path path = Paths.get(new Scanner(System.in).nextLine());
+        Path path  = Paths.get("c:\\1\\book.txt");
         System.out.print("\nВведите ключ шифрования: ");
         int shift = new Scanner(System.in).nextInt();
         Path path_Encrypted = Paths.get(String.valueOf(path.resolve(path.getParent() + "\\caesarEncoded.txt")));
@@ -31,11 +31,11 @@ public class Encrypt {
                 String line = input.readLine();
                 output.write(caesar_encode(line, shift) + '\n');
             }
-            System.out.println("\nЗашифрованный файл успешно создан: " + path_Encrypted);
+            System.out.println("\nШифрование завершено: " + path_Encrypted);
 
         } catch (IOException e) {
-            System.out.println("\nОшибка I/O Error");
-        }
+            e.printStackTrace();
+            }
     }
 
     public static void file_decode() { // Дешифровка
@@ -59,7 +59,7 @@ public class Encrypt {
             System.out.println("\nРасшифрованный файл успешно создан: " + path_Decrypted);
 
         } catch (IOException e) {
-            System.out.println("\nОшибка I/O Error");
+            e.printStackTrace();
         }
     }
 
@@ -155,7 +155,7 @@ public class Encrypt {
             System.out.println("\nФайл успешно создан: " + path_Decrypted);
 
         } catch (IOException e) {
-            System.out.println("\nОшибка I/O Error");
+            e.printStackTrace();
         }
     }
 
@@ -163,46 +163,49 @@ public class Encrypt {
     public static void bruteforce() { //Метод брутфорса
 
         System.out.print("\nВведите путь к зашифрованному файлу: ");
-        Path path_Crypted = Paths.get(new Scanner(System.in).nextLine());
+        // Path path_Crypted = Paths.get(new Scanner(System.in).nextLine());
+        Path path_Crypted = Paths.get("c:\\1\\caesarEncoded.txt");
         Path path_Decrypted = Paths.get(String.valueOf(path_Crypted.resolve(path_Crypted.getParent() + "\\bruteforceDecoded.txt")));
 
-        String decrypted;
         int key;
+        ArrayList<String> arraylist = new ArrayList<>();
+        Pattern p = Pattern.compile("[^аеёиоуыэюя\\s.,!*&?]{7,}");
 
         try (Scanner scanner = new Scanner(path_Crypted);
              BufferedWriter output_crypto = Files.newBufferedWriter(path_Decrypted)
         ) {
             String cryptomessage = scanner.useDelimiter("\\A").next();
 
-            if (cryptomessage.length() < 100) { // если сообщение меньше 1 строки выводим список ключ/значение для самостоятельного выбора
+            if (cryptomessage.length() < 100) { // если сообщение меньше 100 символов выводим список ключ/значение для самостоятельного выбора
                 System.out.println("\nКорректный ключ в списке:");
                 for (key = 1; key < ALPHABET.length(); key++) {
                     System.out.println("Ключ: " + key + " Шифр: " + caesar_encode(cryptomessage, key * -1).substring(0, 25));
                 }
 
-            } else {
+            }else {
 
                 for (key = 1; key < ALPHABET.length(); key++) {
-                    decrypted = (caesar_encode(cryptomessage, key * -1));
-                    String[] array = decrypted.split(" ");
+                    arraylist.add(caesar_encode(cryptomessage, key * -1).substring(cryptomessage.length()/2, cryptomessage.length()/2+200)); //200 символов из середины текста
+                }
+                {
+                    for (String s : arraylist) {
 
-                    for (String s : array) {
-                        if (s.replaceAll("\\P{L}+","").length() > 25) {  //
-                            decrypted = null; // условие если в строке есть слово длиной более 25ти букв. Лингвистическая проверка текста на валидность подбора ключа.
-                            break;
+                        Matcher m = p.matcher(s);
+                        {
+                            if (!m.find()) {
+
+                                System.out.println("\nКлюч найден: " + (arraylist.indexOf(s) + 1));
+                                output_crypto.write(caesar_encode(cryptomessage, (arraylist.indexOf(s) + 1) * -1));
+                                System.out.println("\nРасшифровка завершена: " + path_Decrypted);
+                                break;
+
+                            }
                         }
-                    }
-
-                    if (decrypted != null) {
-
-                        System.out.println("Ключ найден: " + key);
-                        output_crypto.write(decrypted);
-                        System.out.println("\nРасшифрованный файл успешно создан: " + path_Decrypted);
                     }
                 }
             }
         } catch (IOException e) {
-            System.out.println("\nОшибка I/O Error");
+            e.printStackTrace();
         }
     }
 
