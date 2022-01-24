@@ -145,7 +145,7 @@ public class Encrypt {
                         }
                     }
                     if (ALPHABET.indexOf(c) < 0) {
-                        sbdecrypt.append(c); // если символа нет в алфавите, он добавляется из строки с зашифрованным текстом  без изменений
+                        sbdecrypt.append(c); // если символа нет в алфавите, он добавляется из строки с зашифрованным текстом без изменений
                     }
                 }
                 outputCrypto.write(sbdecrypt.toString() + '\n');
@@ -165,8 +165,9 @@ public class Encrypt {
         Path pathDecrypted = Paths.get(String.valueOf(pathCrypted.resolve(pathCrypted.getParent() + "\\bruteforceDecoded.txt")));
 
         int key;
+        int x;
         ArrayList<String> arraylist = new ArrayList<>();
-        Pattern p = Pattern.compile("[^аеёиоуыэюя\\s.,!*&?]{7,}");
+        Pattern p = Pattern.compile("[^a-zаеёиоуыэюя\\s.,!*&?]{7,}");
 
         try (Scanner scanner = new Scanner(pathCrypted);
              BufferedWriter output_crypto = Files.newBufferedWriter(pathDecrypted)
@@ -182,7 +183,8 @@ public class Encrypt {
             }else {
 
                 for (key = 1; key < ALPHABET.length(); key++) {
-                    arraylist.add(caesarEncode(cryptoMessage, key * -1).substring(cryptoMessage.length()/2, cryptoMessage.length()/2+200)); //200 символов из середины текста
+
+                    arraylist.add(caesarEncode(cryptoMessage, key * -1).substring(cryptoMessage.length()/2, cryptoMessage.length()/2+100)); //200 символов из середины текста
                 }
                 {
                     for (String s : arraylist) {
@@ -191,11 +193,17 @@ public class Encrypt {
                         {
                             if (!m.find()) {
 
+                                Scanner enter = new Scanner(System.in);
                                 System.out.println("\nКлюч найден: " + (arraylist.indexOf(s) + 1));
-                                output_crypto.write(caesarEncode(cryptoMessage, (arraylist.indexOf(s) + 1) * -1));
-                                System.out.println("\nРасшифровка завершена: " + pathDecrypted);
-                                break;
-
+                                System.out.println("\nТекст: " + s.substring(0,100));
+                                System.out.println("\nВведите: [1] - если видите корректный ключ, [2] - если ключ ошибочный.");
+                                x = enter.nextInt();
+                                if (x==2) continue;
+                                if (x==1) {
+                                    output_crypto.write(caesarEncode(cryptoMessage, (arraylist.indexOf(s) + 1) * -1));
+                                    System.out.println("\nРасшифровка завершена: " + pathDecrypted);
+                                    break;
+                                }
                             }
                         }
                     }
