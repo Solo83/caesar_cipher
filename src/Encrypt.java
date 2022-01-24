@@ -184,7 +184,7 @@ public class Encrypt {
 
                 for (key = 1; key < ALPHABET.length(); key++) {
 
-                    arraylist.add(caesarEncode(cryptoMessage, key * -1).substring(cryptoMessage.length()/2, cryptoMessage.length()/2+100)); //200 символов из середины текста
+                    arraylist.add(caesarEncode(cryptoMessage, key * -1).substring(cryptoMessage.length()/2, cryptoMessage.length()/2+200)); //200 символов из середины текста
                 }
                 {
                     for (String s : arraylist) {
