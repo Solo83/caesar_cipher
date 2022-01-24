@@ -19,18 +19,18 @@ public class Encrypt {
         Path path = Paths.get(new Scanner(System.in).nextLine());
         System.out.print("\nВведите ключ шифрования: ");
         int shift = new Scanner(System.in).nextInt();
-        Path path_Encrypted = Paths.get(String.valueOf(path.resolve(path.getParent() + "\\caesarEncoded.txt")));
+        Path pathEncrypted = Paths.get(String.valueOf(path.resolve(path.getParent() + "\\caesarEncoded.txt")));
 
         try (
                 BufferedReader input = Files.newBufferedReader(path);
-                BufferedWriter output = Files.newBufferedWriter(path_Encrypted)) {
+                BufferedWriter output = Files.newBufferedWriter(pathEncrypted)) {
 
             while (input.ready()) {
 
                 String line = input.readLine();
-                output.write(caesar_encode(line, shift) + '\n');
+                output.write(caesarEncode(line, shift) + '\n');
             }
-            System.out.println("\nШифрование завершено: " + path_Encrypted);
+            System.out.println("\nШифрование завершено: " + pathEncrypted);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -44,18 +44,18 @@ public class Encrypt {
         Path path = Paths.get(new Scanner(System.in).nextLine());
         System.out.print("\nВведите ключ для дешифровки: ");
         int shift = new Scanner(System.in).nextInt();
-        Path path_Decrypted = Paths.get(String.valueOf(path.resolve(path.getParent() + "\\caesarDecoded.txt")));
+        Path pathDecrypted = Paths.get(String.valueOf(path.resolve(path.getParent() + "\\caesarDecoded.txt")));
 
         try (
                 BufferedReader input = Files.newBufferedReader(path);
-                BufferedWriter output = Files.newBufferedWriter(path_Decrypted)) {
+                BufferedWriter output = Files.newBufferedWriter(pathDecrypted)) {
 
             while (input.ready()) {
 
                 String line = input.readLine();
-                output.write(caesar_encode(line, shift * -1) + '\n');
+                output.write(caesarEncode(line, shift * -1) + '\n');
             }
-            System.out.println("\nРасшифрованный файл успешно создан: " + path_Decrypted);
+            System.out.println("\nРасшифрованный файл успешно создан: " + pathDecrypted);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -71,38 +71,38 @@ public class Encrypt {
         Path path_Original = Paths.get(new Scanner(System.in).nextLine());
         Path path_Decrypted = Paths.get(String.valueOf(path_Crypt.resolve(path_Crypt.getParent() + "\\statisticDecoded.txt")));
 
-        Map<Character, Integer> map_Crypted = new TreeMap<>();
-        Map<Character, Integer> map_Original = new TreeMap<>();
-        Map<Character, Character> map_Merged = new TreeMap<>();
+        Map<Character, Integer> mapCrypted = new TreeMap<>();
+        Map<Character, Integer> mapOriginal = new TreeMap<>();
+        Map<Character, Character> mapMerged = new TreeMap<>();
 
         try (
-                BufferedReader input_crypto = Files.newBufferedReader(path_Crypt)) {
+                BufferedReader inputCrypto = Files.newBufferedReader(path_Crypt)) {
 
-            while (input_crypto.ready()) {
+            while (inputCrypto.ready()) {
 
-                String crypted_String = input_crypto.readLine();
+                String cryptedString = inputCrypto.readLine();
 
-                for (int i = 0; i < crypted_String.length(); i++) {
-                    char c = crypted_String.charAt(i);
+                for (int i = 0; i < cryptedString.length(); i++) {
+                    char c = cryptedString.charAt(i);
                     for (Character character : ALPHABET.toCharArray()) {
                         if (character == c) {
-                            map_Crypted.merge(character, 1, Integer::sum);   // Мар с количеством вхождений символов зашифрованного файла
+                            mapCrypted.merge(character, 1, Integer::sum);   // Мар с количеством вхождений символов зашифрованного файла
                         }
                     }
                 }
             }
 
-            try (BufferedReader input_original = Files.newBufferedReader(path_Original)) {
+            try (BufferedReader inputOriginal = Files.newBufferedReader(path_Original)) {
 
-                while (input_original.ready()) {
+                while (inputOriginal.ready()) {
 
-                    String original_String = input_original.readLine();
+                    String originalString = inputOriginal.readLine();
 
-                    for (int i = 0; i < original_String.length(); i++) {
-                        char c = original_String.charAt(i);
+                    for (int i = 0; i < originalString.length(); i++) {
+                        char c = originalString.charAt(i);
                         for (Character character : ALPHABET.toCharArray()) {
                             if (character == c) {
-                                map_Original.merge(character, 1, Integer::sum); // Мар с количеством вхождений символов словаря
+                                mapOriginal.merge(character, 1, Integer::sum); // Мар с количеством вхождений символов словаря
                             }
                         }
                     }
@@ -112,34 +112,34 @@ public class Encrypt {
             System.out.println("File not found");
         }
 
-        List<Map.Entry<Character, Integer>> list_original = map_Original.entrySet().stream()  // Сортировка данных в Map по убыванию
+        List<Map.Entry<Character, Integer>> listOriginal = mapOriginal.entrySet().stream()  // Сортировка данных в Map по убыванию
                 .sorted((e1, e2) -> -e1.getValue().compareTo(e2.getValue()))
                 .collect(Collectors.toList());
 
-        List<Map.Entry<Character, Integer>> list_crypted = map_Crypted.entrySet().stream()
+        List<Map.Entry<Character, Integer>> listCrypted = mapCrypted.entrySet().stream()
                 .sorted((e1, e2) -> -e1.getValue().compareTo(e2.getValue()))
                 .collect(Collectors.toList());
 
-        for (int i = 0; i < list_original.size(); i++) {                                        // Сборка новой Map по символам с совпадающим количеством вхождений (по-порядку из отсортированных MAP)
-            if (i > list_crypted.size() - 1) {                                                  // Условие, если в словаре будет большее количество символов алвавита чем в зашифрованном тексте
-                map_Merged.put(list_original.get(i).getKey(), list_original.get(i).getKey());
+        for (int i = 0; i < listOriginal.size(); i++) {                                        // Сборка новой Map по символам с совпадающим количеством вхождений (по-порядку из отсортированных MAP)
+            if (i > listCrypted.size() - 1) {                                                  // Условие, если в словаре будет большее количество символов алвавита чем в зашифрованном тексте
+                mapMerged.put(listOriginal.get(i).getKey(), listOriginal.get(i).getKey());
             } else {
-                map_Merged.put(list_original.get(i).getKey(), list_crypted.get(i).getKey());
+                mapMerged.put(listOriginal.get(i).getKey(), listCrypted.get(i).getKey());
             }
         }
 
         try (
-                BufferedReader input_crypto = Files.newBufferedReader(path_Crypt);
-                BufferedWriter output_crypto = Files.newBufferedWriter(path_Decrypted)) {
+                BufferedReader inputCrypto = Files.newBufferedReader(path_Crypt);
+                BufferedWriter outputCrypto = Files.newBufferedWriter(path_Decrypted)) {
 
-            while (input_crypto.ready()) {
+            while (inputCrypto.ready()) {
 
-                String crypted_String = input_crypto.readLine();
+                String crypted_String = inputCrypto.readLine();
                 StringBuilder sbdecrypt = new StringBuilder();
 
                 for (int i = 0; i < crypted_String.length(); i++) {
                     char c = crypted_String.charAt(i);
-                    for (Map.Entry<Character, Character> characterCharacterEntry : map_Merged.entrySet()) {
+                    for (Map.Entry<Character, Character> characterCharacterEntry : mapMerged.entrySet()) {
                         if (characterCharacterEntry.getValue() == c) {
                             sbdecrypt.append(characterCharacterEntry.getKey());   // собираем новую строку из зашифрованной подменяя совпадающие символы из ключей символами из значений (key-value)
                         }
@@ -148,7 +148,7 @@ public class Encrypt {
                         sbdecrypt.append(c); // если символа нет в алфавите, он добавляется из строки с зашифрованным текстом  без изменений
                     }
                 }
-                output_crypto.write(sbdecrypt.toString() + '\n');
+                outputCrypto.write(sbdecrypt.toString() + '\n');
             }
             System.out.println("\nФайл успешно создан: " + path_Decrypted);
 
@@ -161,28 +161,28 @@ public class Encrypt {
     public static void bruteforce() { //Метод брутфорса
 
         System.out.print("\nВведите путь к зашифрованному файлу: ");
-        Path path_Crypted = Paths.get(new Scanner(System.in).nextLine());
-        Path path_Decrypted = Paths.get(String.valueOf(path_Crypted.resolve(path_Crypted.getParent() + "\\bruteforceDecoded.txt")));
+        Path pathCrypted = Paths.get(new Scanner(System.in).nextLine());
+        Path pathDecrypted = Paths.get(String.valueOf(pathCrypted.resolve(pathCrypted.getParent() + "\\bruteforceDecoded.txt")));
 
         int key;
         ArrayList<String> arraylist = new ArrayList<>();
         Pattern p = Pattern.compile("[^аеёиоуыэюя\\s.,!*&?]{7,}");
 
-        try (Scanner scanner = new Scanner(path_Crypted);
-             BufferedWriter output_crypto = Files.newBufferedWriter(path_Decrypted)
+        try (Scanner scanner = new Scanner(pathCrypted);
+             BufferedWriter output_crypto = Files.newBufferedWriter(pathDecrypted)
         ) {
-            String cryptomessage = scanner.useDelimiter("\\A").next();
+            String cryptoMessage = scanner.useDelimiter("\\A").next();
 
-            if (cryptomessage.length() < 100) { // если сообщение меньше 100 символов выводим список ключ/значение для самостоятельного выбора
+            if (cryptoMessage.length() < 100) { // если сообщение меньше 100 символов выводим список ключ/значение для самостоятельного выбора
                 System.out.println("\nКорректный ключ в списке:");
                 for (key = 1; key < ALPHABET.length(); key++) {
-                    System.out.println("Ключ: " + key + " Шифр: " + caesar_encode(cryptomessage, key * -1).substring(0, 50));
+                    System.out.println("Ключ: " + key + " Шифр: " + caesarEncode(cryptoMessage, key * -1).substring(0, 50));
                 }
 
             }else {
 
                 for (key = 1; key < ALPHABET.length(); key++) {
-                    arraylist.add(caesar_encode(cryptomessage, key * -1).substring(cryptomessage.length()/2, cryptomessage.length()/2+200)); //200 символов из середины текста
+                    arraylist.add(caesarEncode(cryptoMessage, key * -1).substring(cryptoMessage.length()/2, cryptoMessage.length()/2+200)); //200 символов из середины текста
                 }
                 {
                     for (String s : arraylist) {
@@ -192,8 +192,8 @@ public class Encrypt {
                             if (!m.find()) {
 
                                 System.out.println("\nКлюч найден: " + (arraylist.indexOf(s) + 1));
-                                output_crypto.write(caesar_encode(cryptomessage, (arraylist.indexOf(s) + 1) * -1));
-                                System.out.println("\nРасшифровка завершена: " + path_Decrypted);
+                                output_crypto.write(caesarEncode(cryptoMessage, (arraylist.indexOf(s) + 1) * -1));
+                                System.out.println("\nРасшифровка завершена: " + pathDecrypted);
                                 break;
 
                             }
@@ -206,7 +206,7 @@ public class Encrypt {
         }
     }
 
-    private static String caesar_encode(String text, int shift) {
+    private static String caesarEncode(String text, int shift) {
 
         StringBuilder result = new StringBuilder(text.length());
         int replace;
