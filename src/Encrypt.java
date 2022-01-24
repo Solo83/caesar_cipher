@@ -121,7 +121,7 @@ public class Encrypt {
                 .collect(Collectors.toList());
 
         for (int i = 0; i < listOriginal.size(); i++) {                                        // Сборка новой Map по символам с совпадающим количеством вхождений (по-порядку из отсортированных MAP)
-            if (i > listCrypted.size() - 1) {                                                  // Условие, если в словаре будет большее количество символов алвавита чем в зашифрованном тексте
+            if (i > listCrypted.size() - 1) {                                                  // Условие, если в словаре будет большее количество символов алфавита, чем в зашифрованном тексте
                 mapMerged.put(listOriginal.get(i).getKey(), listOriginal.get(i).getKey());
             } else {
                 mapMerged.put(listOriginal.get(i).getKey(), listCrypted.get(i).getKey());
